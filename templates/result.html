@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Water Risk Result</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+body { 
+    font-family: 'Poppins', sans-serif; 
+}
+
+.title-font { 
+    font-family: 'Montserrat', sans-serif; 
+    text-shadow: 0 8px 30px rgba(0,255,255,0.4);
+}
+
+/* ===== ULTRA TRANSPARENT GLASS ===== */
+.glass {
+    background: rgba(255,255,255,0.035);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,0.22);
+    box-shadow:
+        0 25px 60px rgba(0,0,0,0.45),
+        inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+
+/* ===== 3D FLOAT ===== */
+.card-3d {
+    transform-style: preserve-3d;
+    transition: all 0.6s ease;
+}
+.card-3d:hover {
+    transform: translateY(-12px) scale(1.04);
+    box-shadow: 0 40px 70px rgba(0,0,0,0.5);
+}
+
+/* ===== RISK BAR ===== */
+@keyframes grow {
+    from { width: 0; }
+    to { width: var(--target); }
+}
+.meter-fill {
+    animation: grow 2s ease forwards;
+}
+
+/* Smooth scroll */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ========= AR RAINBOW GRAPH ========= */
+.ar-ring {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background:
+    conic-gradient(
+      #22c55e 0%,
+      #facc15 40%,
+      #ef4444 70%,
+      #7c2d12 100%
+    );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spin 8s linear infinite;
+}
+
+.ar-inner {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.score-text {
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+
+.glow-red { text-shadow: 0 0 18px red; }
+.glow-green { text-shadow: 0 0 18px #22c55e; }
+
+/* ===== 3D BAR GRAPH ===== */
+.bar {
+  position: relative;
+  width: 60px;
+  border-radius: 10px 10px 0 0;
+  box-shadow:
+    inset -8px 0 15px rgba(0,0,0,0.35),
+    0 15px 25px rgba(0,0,0,0.35);
+}
+
+/* 3D RIGHT FACE */
+.bar::before {
+  content: "";
+  position: absolute;
+  right: -12px;
+  top: 6px;
+  width: 12px;
+  height: 100%;
+  background: rgba(0,0,0,0.25);
+  transform: skewY(-25deg);
+}
+
+/* TOP FACE */
+.bar::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 8px;
+  width: 100%;
+  height: 10px;
+  background: rgba(255,255,255,0.35);
+  transform: skewX(-30deg);
+}
+
+
+</style>
+</head>
+
+<body class="relative w-screen min-h-screen overflow-x-hidden text-white">
+
+<!-- 🎥 BACKGROUND VIDEO -->
+<video autoplay muted loop playsinline
+class="fixed inset-0 w-full h-full object-cover -z-20">
+<source src="{{ url_for('static', filename='assets/bg_video2.mp4') }}" type="video/mp4">
+</video>
+
+<!-- LIGHT OVERLAY -->
+<div class="fixed inset-0 bg-black/30 -z-10"></div>
+
+<!-- ================= RESULT SECTION ================= -->
+<section class="min-h-screen flex flex-col items-center justify-center px-4 py-16">
+
+<h1 class="title-font text-4xl md:text-5xl font-extrabold mb-4
+bg-gradient-to-r from-cyan-300 to-blue-500 bg-clip-text text-transparent">
+🌍 Water Risk Assessment
+</h1>
+
+<p class="italic opacity-80 mb-10 text-center">
+AI-Driven Seasonal • Groundwater • Irrigation Analysis
+</p>
+
+<!-- ================= SEASONAL RISK ================= -->
+<div class="glass card-3d p-6 rounded-3xl max-w-5xl w-full">
+<!-- ================= AI EXPLANATION ================= -->
+<section class="w-full flex justify-center px-6 py-16">
+
+<div class="max-w-6xl w-full">
+
+<h2 class="title-font text-3xl font-bold mb-10 text-center
+bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text text-transparent">
+🤖 How AI Took This Decision
+</h2>
+
+<div class="grid md:grid-cols-3 gap-8">
+
+<!-- CARD 1 -->
+<div class="glass card-3d p-6 rounded-2xl text-center">
+<h3 class="font-bold text-lg mb-2">📉 Rainfall Impact</h3>
+{% if cluster == 0 %}
+<p class="text-sm opacity-90">
+Rainfall distribution is uneven or insufficient during key crop seasons,
+leading to high groundwater dependency.
+</p>
+{% else %}
+<p class="text-sm opacity-90">
+Rainfall levels are well distributed across seasons, reducing stress on groundwater.
+</p>
+{% endif %}
+</div>
+
+<!-- CARD 2 -->
+<div class="glass card-3d p-6 rounded-2xl text-center">
+<h3 class="font-bold text-lg mb-2">🛢 Groundwater Pressure</h3>
+{% if cluster == 0 %}
+<p class="text-sm opacity-90">
+High number of dug wells and deeper groundwater levels indicate over-extraction risk.
+</p>
+{% else %}
+<p class="text-sm opacity-90">
+Groundwater usage is balanced and within sustainable limits.
+</p>
+{% endif %}
+</div>
+
+<!-- CARD 3 -->
+<div class="glass card-3d p-6 rounded-2xl text-center">
+<h3 class="font-bold text-lg mb-2">🌾 Cropping Pattern</h3>
+{% if cluster == 0 %}
+<p class="text-sm opacity-90">
+Water-intensive crops like rice and sugarcane increase stress on available resources.
+</p>
+{% else %}
+<p class="text-sm opacity-90">
+Crop pattern aligns well with rainfall and irrigation availability.
+</p>
+{% endif %}
+</div>
+
+</div>
+
+<p class="text-center mt-8 italic opacity-70">
+AI analyzed 21 hidden features derived from your 7 inputs using clustering patterns.
+</p>
+
+</div>
+</section>
+
+<h2 class="title-font text-2xl font-bold mb-6 text-center">
+🌦 Seasonal Water Risk Breakdown
+</h2>
+
+{% if cluster == 0 %}
+{% set monsoon = "HIGH" %}
+{% set kharif = "HIGH" %}
+{% set rabi = "MODERATE" %}
+{% else %}
+{% set monsoon = "LOW" %}
+{% set kharif = "LOW" %}
+{% set rabi = "LOW" %}
+{% endif %}
+
+<div class="grid md:grid-cols-3 gap-6 text-center">
+
+<div class="glass p-5 rounded-2xl card-3d">
+<h3 class="font-bold text-lg">🌧 Monsoon</h3>
+<p class="text-2xl mt-3 font-semibold">{{ monsoon }}</p>
+</div>
+
+<div class="glass p-5 rounded-2xl card-3d">
+<h3 class="font-bold text-lg">🌾 Kharif</h3>
+<p class="text-2xl mt-3 font-semibold">{{ kharif }}</p>
+</div>
+
+<div class="glass p-5 rounded-2xl card-3d">
+<h3 class="font-bold text-lg">🍂 Rabi</h3>
+<p class="text-2xl mt-3 font-semibold">{{ rabi }}</p>
+</div>
+
+</div>
+</div>
+<!-- ================= 3D FEATURE BAR GRAPH ================= -->
+<div class="bar-3d-container flex justify-center gap-20 items-end h-72">
+
+  <!-- Rainfall -->
+  <div class="bar-3d flex flex-col items-center">
+    <div class="bar bg-blue-400"
+      style="height: {{ (inputs.annual | float / 200) * 20 }}px;">
+    </div>
+    <div class="bar-label">🌧 Rainfall</div>
+  </div>
+
+  <!-- Groundwater -->
+  <div class="bar-3d flex flex-col items-center">
+    <div class="bar bg-red-400"
+      style="height: {{ (inputs.groundwater | float / 30) * 200 }}px;">
+    </div>
+    <div class="bar-label">🕳 Groundwater</div>
+  </div>
+
+  <!-- Wind -->
+  <div class="bar-3d flex flex-col items-center">
+    <div class="bar bg-cyan-400"
+      style="height: {{ (inputs.windspeed | float / 10) * 200 }}px;">
+    </div>
+    <div class="bar-label">💨 Wind</div>
+  </div>
+
+  <!-- Dugwells -->
+  <div class="bar-3d flex flex-col items-center">
+    <div class="bar bg-yellow-400"
+      style="height: {{ (inputs.dugwell_count | float / 200) * 200 }}px;">
+    </div>
+    <div class="bar-label">🛢 Dugwells</div>
+  </div>
+
+</div>
+
+
+  <p class="text-center mt-6 italic opacity-80 text-sm">
+    Taller bars indicate higher intensity or stress contribution.
+    
+  </p>
+
+</div>
+
+<!-- ================= RISK SCORE ================= -->
+<div class="mt-12 glass card-3d w-full max-w-5xl rounded-3xl p-8">
+
+{% if cluster == 0 %}
+{% set score = 85 %}
+{% set color = "bg-red-500" %}
+{% set label = "HIGH RISK" %}
+{% else %}
+{% set score = 30 %}
+{% set color = "bg-green-500" %}
+{% set label = "LOW RISK" %}
+{% endif %}
+
+<h2 class="text-center text-3xl font-bold mb-3">
+💧 Water Risk Score
+</h2>
+
+<p class="text-center italic opacity-80 mb-6">
+AI-derived sustainability index (0–100)
+</p>
+
+<div class="w-full bg-white/20 rounded-full h-6 overflow-hidden mb-3">
+<div class="meter-fill h-6 {{ color }}"
+style="--target: {{ score }}%;"></div>
+</div>
+
+<div class="flex justify-between text-sm opacity-80">
+<span>Safe</span>
+<span class="font-bold">{{ score }}/100 — {{ label }}</span>
+<span>Critical</span>
+</div>
+
+<!-- ================= KEY INPUTS ================= -->
+<div class="grid md:grid-cols-4 gap-6 mt-10 text-center">
+
+<div class="glass p-5 rounded-2xl card-3d">
+<h3>🌧 Rainfall</h3>
+<p class="text-xl font-bold mt-2">{{ inputs.annual }} mm</p>
+</div>
+
+<div class="glass p-5 rounded-2xl card-3d">
+<h3>🕳 Groundwater</h3>
+<p class="text-xl font-bold mt-2">{{ inputs.groundwater }}</p>
+</div>
+
+<div class="glass p-5 rounded-2xl card-3d">
+<h3>💨 Wind Speed</h3>
+<p class="text-xl font-bold mt-2">{{ inputs.windspeed }}</p>
+</div>
+
+<div class="glass p-5 rounded-2xl card-3d">
+<h3>🛢 Dug Wells</h3>
+<p class="text-xl font-bold mt-2">{{ inputs.dugwell_count }}</p>
+</div>
+
+</div>
+</div>
+
+<p class="mt-12 italic opacity-70 animate-pulse">
+⬇ Scroll for AI-Generated Recommendations ⬇
+</p>
+
+</section>
+
+<!-- 🌊 ANIMATED WATER WAVE DIVIDER -->
+<div class="relative w-full overflow-hidden leading-none -mt-2">
+<svg class="relative block w-full h-[120px]" viewBox="0 0 1200 120" preserveAspectRatio="none">
+<path d="M0,0V46.29c47.79,22,103.59,29,158,17.39C230.41,51.77,284.72,22,339,8.69c54.51-13.41,109.9-10.34,164,4.24C558,29.58,612.75,59.06,667,68.05c54.2,9,108.9-4.55,163-19.31C883.68,34.13,938.68,13,993,6.29c56.67-7,113.34,4.73,167,18.46V0Z"
+fill="rgba(255,255,255,0.08)">
+</path>
+</svg>
+</div>
+
+
+<!-- ================= RECOMMENDATIONS ================= -->
+<section class="min-h-screen flex flex-col items-center justify-center px-6 py-16">
+
+<h2 class="title-font text-3xl font-bold mb-10
+bg-gradient-to-r from-green-300 to-emerald-500 bg-clip-text text-transparent">
+🌱 Smart Water Recommendations
+</h2>
+
+<div class="grid md:grid-cols-3 gap-8 max-w-6xl">
+
+<div class="glass card-3d p-6 rounded-2xl text-center">
+💧 <b>Rainwater Harvesting</b>
+<p class="text-sm mt-3">Farm ponds & recharge pits.</p>
+</div>
+
+<div class="glass card-3d p-6 rounded-2xl text-center">
+🌾 <b>Crop Diversification</b>
+<p class="text-sm mt-3">Reduce water-intensive crops.</p>
+</div>
+
+<div class="glass card-3d p-6 rounded-2xl text-center">
+🛢 <b>Dugwell Regulation</b>
+<p class="text-sm mt-3">Limit over-extraction.</p>
+</div>
+
+<div class="glass card-3d p-6 rounded-2xl text-center">
+💨 <b>Wind-Aware Irrigation</b>
+<p class="text-sm mt-3">Avoid irrigation during winds.</p>
+</div>
+
+<div class="glass card-3d p-6 rounded-2xl text-center">
+📊 <b>Data-Driven Planning</b>
+<p class="text-sm mt-3">Use seasonal trends.</p>
+</div>
+
+<div class="glass card-3d p-6 rounded-2xl text-center">
+🌍 <b>Sustainable Policy</b>
+<p class="text-sm mt-3">Protect recharge zones.</p>
+</div>
+
+</div>
+
+<a href="/" class="mt-14 px-8 py-3 rounded-xl bg-white/20 hover:bg-white/30 transition">
+🔄 Predict Again
+</a>
+
+<footer class="mt-10 text-xs italic opacity-70">
+© 2025 • Nishant  | Rainfall and Irrigation Pattern Analysis
+</footer>
+
+</section>
+
+</body>
+</html>
